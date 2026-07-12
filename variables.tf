@@ -3,6 +3,8 @@ variable "iothub_dps_certificates" {
 Map of iothub_dps_certificates, attributes below
 Required:
     - certificate_content
+    - certificate_content_key_vault_id (alternative to certificate_content - read from Key Vault instead)
+    - certificate_content_key_vault_secret_name (alternative to certificate_content - read from Key Vault instead)
     - iot_dps_name
     - name
     - resource_group_name
@@ -11,11 +13,13 @@ Optional:
 EOT
 
   type = map(object({
-    certificate_content = string
-    iot_dps_name        = string
-    name                = string
-    resource_group_name = string
-    is_verified         = optional(bool) # Default: false
+    certificate_content                       = string
+    certificate_content_key_vault_id          = optional(string)
+    certificate_content_key_vault_secret_name = optional(string)
+    iot_dps_name                              = string
+    name                                      = string
+    resource_group_name                       = string
+    is_verified                               = optional(bool) # Default: false
   }))
   validation {
     condition = alltrue([
