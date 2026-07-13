@@ -3,8 +3,8 @@ variable "iothub_dps_certificates" {
 Map of iothub_dps_certificates, attributes below
 Required:
     - certificate_content
-    - certificate_content_key_vault_id (alternative to certificate_content - read from Key Vault instead)
-    - certificate_content_key_vault_secret_name (alternative to certificate_content - read from Key Vault instead)
+    - certificate_content_key_vault_id (optional, alternative to certificate_content)
+    - certificate_content_key_vault_secret_name (optional, alternative to certificate_content)
     - iot_dps_name
     - name
     - resource_group_name
@@ -19,16 +19,8 @@ EOT
     iot_dps_name                              = string
     name                                      = string
     resource_group_name                       = string
-    is_verified                               = optional(bool) # Default: false
+    is_verified                               = optional(bool)
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.iothub_dps_certificates : (
-        length(v.certificate_content) > 0
-      )
-    ])
-    error_message = "must not be empty"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_iothub_dps_certificate's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -59,5 +51,8 @@ EOT
   #   source:    [from resourcegroups.ValidateName] !matched
   # path: iot_dps_name
   #   source:    [from validate.IoTHubName] !matched
+  # path: certificate_content
+  #   condition: length(value) > 0
+  #   message:   must not be empty
 }
 
